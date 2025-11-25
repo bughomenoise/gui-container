@@ -8,7 +8,7 @@ on:
     
 env:
   TAG_NAME: bughomenoise/gui-container
-  PUSH: ${{ github.ref_name == 'release' || github.event_name = 'schedule' }}
+  PUSH: ${{ github.ref_name == 'release' || github.event_name == 'schedule' }}
 
 jobs:
   docker:
