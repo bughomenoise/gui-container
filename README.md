@@ -1,12 +1,12 @@
 # How to use
-### requirements
+### - requirements
 - os: linux_x86-64.
 - gpu: amd or intel or nvidia.
 - rootless container *recommend podman.
 - X11 socket *if you use wayland, enable Xwayland.
 - pulseaudio socket *if you use pipewire, enable pipewire-pulse.
 
-### examples
+### - examples
 <details>
 <summary>Firefox</summary>
 
@@ -46,6 +46,7 @@ podman run -it \
 -v "/tmp/.X11-unix:/tmp/.X11-unix" \
 -v "${XDG_RUNTIME_DIR}/pulse/native:/tmp/pulse/native" \
 --device /dev/dri \
+--device /dev/kvm \
 -v "${HOME}/.gradle:/root/.gradle" \
 -v "${HOME}/Android:/root/Android" \
 -v "${HOME}/.android:/root/.android" \
