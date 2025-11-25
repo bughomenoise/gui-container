@@ -24,7 +24,7 @@ jobs:
         if: ${{ env.PUSH }}
         uses: actions/checkout@v6
         with:
-          ref: "release"
+          ref: 'release'
       
       - name: Login to docker.io
         if: ${{ env.PUSH }}
