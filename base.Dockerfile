@@ -29,4 +29,4 @@ RUN pacman -S --noconfirm fontconfig noto-fonts gnu-free-fonts ttf-liberation
 RUN pacman -S --noconfirm libxkbfile libbsd
 
 #app
-RUN sudo -u arch -- paru -S --noconfirm firefox
+RUN pacman -S --noconfirm firefox chromium vim wget
