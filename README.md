@@ -1,61 +1,82 @@
-# How to use
-### - requirements
+# What is This?
+- just archlinux container pre-install graphic & audio packages.
+---
+
+### Why
+- just limit resources.
+---
+
+### Requirements
 - os: linux_x86-64.
 - gpu: amd or intel or nvidia.
 - rootless container *recommend podman.
 - X11 socket *if you use wayland, enable Xwayland.
 - pulseaudio socket *if you use pipewire, enable pipewire-pulse.
+---
 
-### - examples
+### Examples
+
 <details>
-<summary>Firefox</summary>
+<summary>Run GUI App</summary>
 
 ```sh
-# create directory for firefox
-mkdir -p ~/{.mozilla,Downloads}
+export GUI_CONTAINER_NAME_TMP="<container_name>"
+export GUI_CONTAINER_HOME_TMP=$HOME/.gui-container/home/$GUI_CONTAINER_NAME_TMP
+mkdir -p $GUI_CONTAINER_HOME_TMP/.xdg-runtime/pulse
 
 # create container (run first time)
-podman run -it \
--e "XDG_RUNTIME_DIR=/tmp" \
+podman run -it --userns=keep-id \
+-e "XDG_RUNTIME_DIR=${HOME}/.xdg-runtime" \
 -e "DISPLAY=${DISPLAY}" \
 -v "/tmp/.X11-unix:/tmp/.X11-unix" \
--v "${XDG_RUNTIME_DIR}/pulse/native:/tmp/pulse/native" \
+-v "${XDG_RUNTIME_DIR}/pulse/native:${HOME}/.xdg-runtime/pulse/native:U" \
 --device /dev/dri \
--v "${HOME}/.mozilla:/root/.mozilla" \
--v "${HOME}/Downloads:/root/Downloads" \
---name firefox \
-docker.io/bughomenoise/gui-container:base firefox
+-v "${GUI_CONTAINER_HOME_TMP}:${HOME}:U" \
+-e "HOME=${HOME}" \
+--name $GUI_CONTAINER_NAME_TMP \
+docker.io/bughomenoise/gui-container:latest "<gui_app_command>"
 
 # run after create container
-podman start firefox &
+podman start <container_name>
 ```
 
 </details>
 
 <details>
-<summary>Android-Studio</summary>
+<summary>Install Package With Dockerfile</summary>
+
+##### Create Dockerfile
+```Dockerfile
+FROM --platform=linux/amd64 docker.io/bughomenoise/gui-container:latest
+
+# archlinux package
+RUN pacman -Sy --noconfirm <archlinux_package_name>
+
+# AUR
+RUN sudo -u arch -- paru -Sy --noconfirm <aur_package_name>
+```
+
+##### Build Image
+```sh
+podman build -t <tag_name> -f <dockerfile_path>
+```
+
+</details>
+
+<details>
+<summary>Install Package After Create Container</summary>
 
 ```sh
-# create directory for android-studio
-mkdir -p ~/{.gradle,Android,.android,AndroidStudioProjects}
+# exec into container with "arch" user
+podman exec --user arch -it <container_name> bash 
 
-# create container (run first time)
-podman run -it \
--e "XDG_RUNTIME_DIR=/tmp" \
--e "DISPLAY=${DISPLAY}" \
--v "/tmp/.X11-unix:/tmp/.X11-unix" \
--v "${XDG_RUNTIME_DIR}/pulse/native:/tmp/pulse/native" \
---device /dev/dri \
---device /dev/kvm \
--v "${HOME}/.gradle:/root/.gradle" \
--v "${HOME}/Android:/root/Android" \
--v "${HOME}/.android:/root/.android" \
--v "${HOME}/AndroidStudioProjects:/root/AndroidStudioProjects" \
---name android-studio \
-docker.io/bughomenoise/gui-container:android-studio android-studio
+## then install package inside container
 
-# run after create container
-podman start android-studio &
+# archlinux package
+sudo pacman -Sy <archlinux_package_name>
+
+# AUR
+paru -Sy <aur_package_name>
 ```
 
 </details>

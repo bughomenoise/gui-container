@@ -39,17 +39,4 @@ jobs:
           platforms: linux/amd64
           file: ./base.Dockerfile
           push:  ${{ env.PUSH }}
-          tags: ${{ env.TAG_NAME }}:base
-
-      - name: Build android-studio.Dockerfile
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/amd64
-          file: ./app/android-studio.Dockerfile
-          push:  ${{ env.PUSH }}
-          tags: ${{ env.TAG_NAME }}:android-studio
-          
-          
-        
-
-          
+          tags: ${{ env.TAG_NAME }}
