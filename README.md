@@ -3,7 +3,7 @@
 ---
 
 ### Why
-- just limit resource.
+- just limit resources.
 ---
 
 ### Requirements
@@ -22,14 +22,14 @@
 ```sh
 export GUI_CONTAINER_NAME_TMP="<container_name>"
 export GUI_CONTAINER_HOME_TMP=$HOME/.gui-container/home/$GUI_CONTAINER_NAME_TMP
-mkdir -p $GUI_CONTAINER_HOME_TMP
+mkdir -p $GUI_CONTAINER_HOME_TMP/.xdg-runtime/pulse
 
 # create container (run first time)
 podman run -it --userns=keep-id \
--e "XDG_RUNTIME_DIR=/tmp" \
+-e "XDG_RUNTIME_DIR=${HOME}/.xdg-runtime" \
 -e "DISPLAY=${DISPLAY}" \
 -v "/tmp/.X11-unix:/tmp/.X11-unix" \
--v "${XDG_RUNTIME_DIR}/pulse/native:/tmp/pulse/native" \
+-v "${XDG_RUNTIME_DIR}/pulse/native:${HOME}/.xdg-runtime/pulse/native:U" \
 --device /dev/dri \
 -v "${GUI_CONTAINER_HOME_TMP}:${HOME}:U" \
 -e "HOME=${HOME}" \
@@ -67,7 +67,7 @@ podman build -t <tag_name> -f <dockerfile_path>
 <summary>Install Package After Create Container</summary>
 
 ```sh
-# exec into container with arch user
+# exec into container with "arch" user
 podman exec --user arch -it <container_name> bash 
 
 ## then install package inside container
