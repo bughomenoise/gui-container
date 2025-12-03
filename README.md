@@ -67,7 +67,7 @@ podman build -t <tag_name> -f <dockerfile_path>
 <summary>Install Package After Create Container</summary>
 
 ```sh
-# exec into container with "arch" user
+# exec into container with "arch" user or uid "1000"
 podman exec --user arch -it <container_name> bash 
 
 ## then install package inside container
