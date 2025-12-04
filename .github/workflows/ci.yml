@@ -40,6 +40,8 @@ jobs:
           file: ./base.Dockerfile
           push:  ${{ env.PUSH }}
           tags: ${{ env.TAG_NAME }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           
       - name: Build android-studio.Dockerfile
         uses: docker/build-push-action@v6
@@ -48,6 +50,8 @@ jobs:
           file: ./images/android-studio.Dockerfile
           push:  ${{ env.PUSH }}
           tags: ${{ env.TAG_NAME }}:android-studio
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build bun.Dockerfile
         uses: docker/build-push-action@v6
@@ -56,6 +60,8 @@ jobs:
           file: ./images/bun.Dockerfile
           push:  ${{ env.PUSH }}
           tags: ${{ env.TAG_NAME }}:bun
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           
       - name: Build nix.Dockerfile
         uses: docker/build-push-action@v6
@@ -64,6 +70,8 @@ jobs:
           file: ./images/nix.Dockerfile
           push:  ${{ env.PUSH }}
           tags: ${{ env.TAG_NAME }}:nix
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build steam.Dockerfile
         uses: docker/build-push-action@v6
@@ -72,6 +80,8 @@ jobs:
           file: ./images/steam.Dockerfile
           push:  ${{ env.PUSH }}
           tags: ${{ env.TAG_NAME }}:steam
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build obs.Dockerfile
         uses: docker/build-push-action@v6
@@ -80,3 +90,5 @@ jobs:
           file: ./images/obs.Dockerfile
           push:  ${{ env.PUSH }}
           tags: ${{ env.TAG_NAME }}:obs
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
