@@ -1,7 +1,7 @@
 FROM --platform=linux/amd64 bughomenoise/gui-container:latest
 
 #LANG
-RUN pacman -Syu --noconfim
+RUN pacman -Syu --noconfirm
 RUN pacman -S --noconfirm jdk-openjdk
 
 #IDE
