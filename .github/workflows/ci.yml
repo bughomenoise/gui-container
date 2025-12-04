@@ -40,3 +40,43 @@ jobs:
           file: ./base.Dockerfile
           push:  ${{ env.PUSH }}
           tags: ${{ env.TAG_NAME }}
+          
+      - name: Build android-studio.Dockerfile
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          file: ./images/android-studio.Dockerfile
+          push:  ${{ env.PUSH }}
+          tags: ${{ env.TAG_NAME }}:android-studio
+
+      - name: Build bun.Dockerfile
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          file: ./images/bun.Dockerfile
+          push:  ${{ env.PUSH }}
+          tags: ${{ env.TAG_NAME }}:bun
+          
+      - name: Build nix.Dockerfile
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          file: ./images/nix.Dockerfile
+          push:  ${{ env.PUSH }}
+          tags: ${{ env.TAG_NAME }}:nix
+
+      - name: Build steam.Dockerfile
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          file: ./images/steam.Dockerfile
+          push:  ${{ env.PUSH }}
+          tags: ${{ env.TAG_NAME }}:steam
+
+      - name: Build obs.Dockerfile
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          file: ./images/obs.Dockerfile
+          push:  ${{ env.PUSH }}
+          tags: ${{ env.TAG_NAME }}:obs

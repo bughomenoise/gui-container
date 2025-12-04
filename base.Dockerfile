@@ -1,16 +1,22 @@
-FROM --platform=linux/amd64 archlinux:latest
+FROM --platform=linux/amd64 archlinux:multilib-devel
 
-RUN pacman -Sy --noconfirm
+RUN pacman -Syu --noconfirm
+
+RUN systemd-machine-id-setup
+
+RUN touch /etc/default/locale
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+RUN locale-gen
 
 #video
 RUN pacman -S --noconfirm libva-mesa-driver mesa
-RUN pacman -S --noconfirm intel-media-driver libva-intel-driver vulkan-intel xf86-video-intel
-RUN pacman -S --noconfirm vulkan-radeon xf86-video-amdgpu
-RUN pacman -S --noconfirm vulkan-nouveau xf86-video-nouveau
+RUN pacman -S --noconfirm vulkan-intel lib32-vulkan-intel
+RUN pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon
+RUN pacman -S --noconfirm vulkan-nouveau lib32-vulkan-nouveau
 RUN pacman -S --noconfirm xorg-server xorg-xinit
 
 #audio
-RUN pacman -S --noconfirm pipewire pipewire-alsa pipewire-pulse
+RUN pacman -S --noconfirm pipewire pipewire-alsa pipewire-jack pipewire-pulse
 
 #create user
 ARG username="arch"
@@ -25,6 +31,7 @@ RUN pacman -S --noconfirm --needed git base-devel
 RUN sudo -u ${username} -- git clone https://aur.archlinux.org/paru-bin.git ${paru_path}
 RUN cd ${paru_path} && sudo -u ${username} -- makepkg -si --noconfirm
 RUN rm -rf ${paru_path}
+RUN sudo -u arch -- paru -Syu --noconfirm
 
 #font
 RUN pacman -S --noconfirm fontconfig noto-fonts gnu-free-fonts ttf-liberation
@@ -33,4 +40,7 @@ RUN pacman -S --noconfirm fontconfig noto-fonts gnu-free-fonts ttf-liberation
 RUN pacman -S --noconfirm libxkbfile libbsd
 
 #app
-RUN pacman -S --noconfirm firefox chromium vim wget
+RUN pacman -S --noconfirm vim zed curl
+RUN sudo -u arch -- paru -S --noconfirm librewolf-bin
+RUN sudo -u arch -- paru -S --noconfirm ungoogled-chromium-bin
+RUN sudo -u arch -- paru -S --noconfirm antigravity
