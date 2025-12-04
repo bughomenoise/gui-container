@@ -45,4 +45,4 @@ RUN sudo -u arch -- paru -S --noconfirm antigravity
 
 #upgrade
 RUN pacman -Syu --noconfirm
-RUN sudo -u -- paru -Syu --noconfirm
+RUN sudo -u arch -- paru -Syu --noconfirm
