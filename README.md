@@ -24,8 +24,8 @@ export GUI_CONTAINER_NAME_TMP="<container_name>"
 export GUI_CONTAINER_HOME_TMP=$HOME/.gui-container/home/$GUI_CONTAINER_NAME_TMP
 mkdir -p $GUI_CONTAINER_HOME_TMP/.xdg-runtime/pulse
 
-# create container (run first time)
-podman run -it --userns=keep-id \
+# create container
+podman run --userns=keep-id \
 -e "XDG_RUNTIME_DIR=${HOME}/.xdg-runtime" \
 -e "DISPLAY=${DISPLAY}" \
 -v "/tmp/.X11-unix:/tmp/.X11-unix" \
@@ -36,7 +36,7 @@ podman run -it --userns=keep-id \
 --name $GUI_CONTAINER_NAME_TMP \
 docker.io/bughomenoise/gui-container:latest "<gui_app_command>"
 
-# run after create container
+# run
 podman start <container_name>
 ```
 
@@ -53,7 +53,7 @@ FROM --platform=linux/amd64 docker.io/bughomenoise/gui-container:latest
 RUN pacman -Sy --noconfirm <archlinux_package_name>
 
 # AUR
-RUN sudo -u arch -- paru -Sy --noconfirm <aur_package_name>
+RUN sudo -u avoid-user -- paru -Sy --noconfirm <aur_package_name>
 ```
 
 ##### Build Image
@@ -67,8 +67,8 @@ podman build -t <tag_name> -f <dockerfile_path>
 <summary>Install Package After Create Container</summary>
 
 ```sh
-# exec into container with "arch" user or uid "1000"
-podman exec --user arch -it <container_name> bash 
+# exec into container with "avoid-user" user or uid "9999"
+podman exec --user avoid-user -it <container_name> bash 
 
 ## then install package inside container
 
