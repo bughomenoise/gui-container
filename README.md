@@ -20,11 +20,20 @@
 git clone github.com/bughomenoise/gui-container
 cd gui-container
 
-# sh create.sh <container-name> <image_name> <gui_app_command> <podman_extra_flag>
-sh create.sh librewolf-gui docker.io/bughomenoise/gui-container:latest librewolf --cap-drop ALL
+# add completion
+source ./completion
 
-# run with command
-podman start <container_name>
+# create container
+# ./gui-container create <image_name> <gui_app_command> <container-name> <podman_extra_flag>
+./gui-container docker.io/bughomenoise/gui-container:latest librewolf librewolf-gui --cap-drop ALL
+
+# run with command (also run with app luncher)
+# podman start <container_name>
+podman start librewolf-gui
+
+# delete
+# ./gui-container delete <container_name>
+./gui-container delete librewolf
 ```
 
 
