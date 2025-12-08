@@ -14,33 +14,19 @@
 - pulseaudio socket *if you use pipewire, enable pipewire-pulse.
 ---
 
-### Examples
-
-<details>
-<summary>Run GUI App</summary>
+### How to use
 
 ```sh
-export GUI_CONTAINER_NAME_TMP="<container_name>"
-export GUI_CONTAINER_HOME_TMP=$HOME/.gui-container/home/$GUI_CONTAINER_NAME_TMP
-mkdir -p $GUI_CONTAINER_HOME_TMP/.xdg-runtime/pulse
+git clone github.com/bughomenoise/gui-container
+cd gui-container
 
-# create container
-podman run --userns=keep-id \
--e "XDG_RUNTIME_DIR=${HOME}/.xdg-runtime" \
--e "DISPLAY=${DISPLAY}" \
--v "/tmp/.X11-unix:/tmp/.X11-unix" \
--v "${XDG_RUNTIME_DIR}/pulse/native:${HOME}/.xdg-runtime/pulse/native:U" \
---device /dev/dri \
--v "${GUI_CONTAINER_HOME_TMP}:${HOME}:U" \
--e "HOME=${HOME}" \
---name $GUI_CONTAINER_NAME_TMP \
-docker.io/bughomenoise/gui-container:latest "<gui_app_command>"
+# sh create.sh <container-name> <image_name> <gui_app_command> <podman_extra_flag>
+sh create.sh librewolf-gui docker.io/bughomenoise/gui-container:latest librewolf --cap-drop ALL
 
-# run
+# run with command
 podman start <container_name>
 ```
 
-</details>
 
 <details>
 <summary>Install Package With Dockerfile</summary>
