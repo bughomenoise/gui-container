@@ -1,0 +1,38 @@
+#!/bin/sh
+
+_COMMAND=$1
+
+if [ "${_COMMAND}" = "create" ] ; then
+
+  CONTAINER_NAME=$4;
+  CONTAINER_IMAGE=$2;
+  APP_START_COMMAND=$3;
+  EXTRA_FLAG=${@:5};
+
+  PREFIX="gui-container_"
+  CONTAINER_HOME="${HOME}/.gui-container/${CONTAINER_NAME}"
+
+  mkdir -p ~/.local/share/applications;
+  mkdir -p "${CONTAINER_HOME}/.xdg-runtime/pulse" &&
+  podman create --userns=keep-id \
+  -e "XDG_RUNTIME_DIR=${HOME}/.xdg-runtime" \
+  -e "DISPLAY=${DISPLAY}" \
+  -v "/tmp/.X11-unix:/tmp/.X11-unix" \
+  -v "${XDG_RUNTIME_DIR}/pulse/native:${HOME}/.xdg-runtime/pulse/native:U" \
+  --device /dev/dri \
+  -v "${CONTAINER_HOME}:${HOME}:U" \
+  -e "HOME=${HOME}" ${EXTRA_FLAG} \
+  --name "${CONTAINER_NAME}" \
+  "${CONTAINER_IMAGE}" "${APP_START_COMMAND}" &&
+  printf "[Desktop Entry]\nName=%s\nExec=podman start %s\nType=Application" "${CONTAINER_NAME} (GUI-CONTAINER)" "${CONTAINER_NAME}" \
+  > "${HOME}/.local/share/applications/${PREFIX}${CONTAINER_NAME}.desktop"
+
+elif [ "${_COMMAND}" = "delete" ] ; then
+
+  CONTAINER_NAME=$2
+
+  rm "${HOME}/.local/share/applications/gui-container_${CONTAINER_NAME}.desktop" &&
+  podman rm "${CONTAINER_NAME}" &&
+  rm -rf "${HOME}/.gui-contaner/${CONTAINER_NAME}"
+  
+fi

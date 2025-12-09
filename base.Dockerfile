@@ -23,8 +23,8 @@ RUN pacman -S --noconfirm fontconfig noto-fonts gnu-free-fonts ttf-liberation
 RUN pacman -S --noconfirm libxkbfile libbsd
 
 #create user
-ARG username="arch"
-RUN useradd -m -u 1000 -G wheel,users,kvm,render,video,audio ${username}
+ARG username="avoid-user"
+RUN useradd -m -u 9999 -G wheel,users,kvm,render,video,audio ${username}
 RUN echo "${username} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN passwd -d ${username}
@@ -38,11 +38,10 @@ RUN rm -rf ${paru_path}
 
 
 #app
-RUN pacman -S --noconfirm vim zed curl
-RUN sudo -u arch -- paru -Sy --noconfirm librewolf-bin
-RUN sudo -u arch -- paru -S --noconfirm ungoogled-chromium-bin
-RUN sudo -u arch -- paru -S --noconfirm antigravity
+RUN pacman -S --noconfirm vim curl
+RUN sudo -u ${username} -- paru -Sy --noconfirm librewolf-bin
+RUN sudo -u ${username} -- paru -S --noconfirm ungoogled-chromium-bin
 
 #upgrade
 RUN pacman -Syu --noconfirm
-RUN sudo -u arch -- paru -Syu --noconfirm
+RUN sudo -u ${username} -- paru -Syu --noconfirm

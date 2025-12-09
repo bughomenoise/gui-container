@@ -14,33 +14,28 @@
 - pulseaudio socket *if you use pipewire, enable pipewire-pulse.
 ---
 
-### Examples
-
-<details>
-<summary>Run GUI App</summary>
+### How to use
 
 ```sh
-export GUI_CONTAINER_NAME_TMP="<container_name>"
-export GUI_CONTAINER_HOME_TMP=$HOME/.gui-container/home/$GUI_CONTAINER_NAME_TMP
-mkdir -p $GUI_CONTAINER_HOME_TMP/.xdg-runtime/pulse
+git clone github.com/bughomenoise/gui-container
+cd gui-container
 
-# create container (run first time)
-podman run -it --userns=keep-id \
--e "XDG_RUNTIME_DIR=${HOME}/.xdg-runtime" \
--e "DISPLAY=${DISPLAY}" \
--v "/tmp/.X11-unix:/tmp/.X11-unix" \
--v "${XDG_RUNTIME_DIR}/pulse/native:${HOME}/.xdg-runtime/pulse/native:U" \
---device /dev/dri \
--v "${GUI_CONTAINER_HOME_TMP}:${HOME}:U" \
--e "HOME=${HOME}" \
---name $GUI_CONTAINER_NAME_TMP \
-docker.io/bughomenoise/gui-container:latest "<gui_app_command>"
+# add completion
+source ./completion
 
-# run after create container
-podman start <container_name>
+# create container
+# ./gui-container create <image_name> <gui_app_command> <container-name> <podman_extra_flag>
+./gui-container docker.io/bughomenoise/gui-container:latest librewolf librewolf-gui --cap-drop ALL
+
+# run with command (also run with app luncher)
+# podman start <container_name>
+podman start librewolf-gui
+
+# delete
+# ./gui-container delete <container_name>
+./gui-container delete librewolf
 ```
 
-</details>
 
 <details>
 <summary>Install Package With Dockerfile</summary>
@@ -53,7 +48,7 @@ FROM --platform=linux/amd64 docker.io/bughomenoise/gui-container:latest
 RUN pacman -Sy --noconfirm <archlinux_package_name>
 
 # AUR
-RUN sudo -u arch -- paru -Sy --noconfirm <aur_package_name>
+RUN sudo -u avoid-user -- paru -Sy --noconfirm <aur_package_name>
 ```
 
 ##### Build Image
@@ -67,8 +62,8 @@ podman build -t <tag_name> -f <dockerfile_path>
 <summary>Install Package After Create Container</summary>
 
 ```sh
-# exec into container with "arch" user or uid "1000"
-podman exec --user arch -it <container_name> bash 
+# exec into container with "avoid-user" user or uid "9999"
+podman exec --user avoid-user -it <container_name> bash 
 
 ## then install package inside container
 
