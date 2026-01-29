@@ -37,6 +37,7 @@ RUN sudo -u avoiduser -- paru Sy noconfirm <aur_package_name>
 podman build -t <tag_name> -f <dockerfile_path>
 ```
 
+##### RUN
 ```sh
 git clone github.com/bughomenoise/gui-container
 cd gui-container

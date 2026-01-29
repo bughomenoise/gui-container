@@ -83,6 +83,6 @@ elif [ "${_COMMAND}" = "delete-home" ] ; then
 
   check_null "${HOME_TO_DELETE}" "gui_container_home_name"
 
-  rm -I "${GUI_CONTAINER_HOME}/${HOME_TO_DELETE}"
+  rm -I -rf "${GUI_CONTAINER_HOME}/${HOME_TO_DELETE}"
 
 fi
