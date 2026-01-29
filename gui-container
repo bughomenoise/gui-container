@@ -1,43 +1,88 @@
 #!/bin/sh
 
+PREFIX="gui-container_"
+GUI_CONTAINER_HOME="${HOME}/.gui-container"
+
+ENTRY_PATH="${HOME}/.local/share/applications"
+
+check_null() {
+  if [ "$1" = "" ]; then
+    echo "argument <$2> can't be empty!"; 
+    exit 1;
+  fi
+}
+
+create_home() {
+  check_null $1 "gui_container_home_name"
+  mkdir -p "${GUI_CONTAINER_HOME}/$1/.xdg-runtime/pulse"
+}
+
 _COMMAND=$1
 
-if [ "${_COMMAND}" = "create" ] ; then
+if [ "${_COMMAND}" = "create-container" ] ; then
 
-  CONTAINER_NAME=$4;
-  CONTAINER_IMAGE=$2;
-  APP_START_COMMAND=$3;
+  CONTAINER_IMAGE=$2
+  CONTAINER_NAME=$3
+  START_CMD=$4
   EXTRA_FLAG=${@:5};
 
-  PREFIX="gui-container_"
-  CONTAINER_HOME="${HOME}/.gui-container/${CONTAINER_NAME}"
+  CONTAINER_HOME="${GUI_CONTAINER_HOME}/${CONTAINER_NAME}"
 
-  mkdir -p ~/.local/share/applications;
-  mkdir -p "${CONTAINER_HOME}/.xdg-runtime/pulse" &&
-  podman create --userns=keep-id \
+  create_home "${CONTAINER_NAME}"
+
+  mkdir -p "${CONTAINER_HOME}/.xdg-runtime/pulse" 2> /dev/null;
+  podman create -it -u "${UID}:${GID}" \
+  --userns=keep-id \
+  --group-add wheel,users,kvm,render,video,audio \
   -e "XDG_RUNTIME_DIR=${HOME}/.xdg-runtime" \
   -e "DISPLAY=${DISPLAY}" \
   -v "/tmp/.X11-unix:/tmp/.X11-unix" \
   -v "${XDG_RUNTIME_DIR}/pulse/native:${HOME}/.xdg-runtime/pulse/native:U" \
   --device /dev/dri \
+  --shm-size=512m \
   -v "${CONTAINER_HOME}:${HOME}:U" \
   -e "HOME=${HOME}" ${EXTRA_FLAG} \
-  --name "${CONTAINER_NAME}" \
-  "${CONTAINER_IMAGE}" "${APP_START_COMMAND}" &&
-  printf "[Desktop Entry]\nName=%s\nExec=podman start %s\nType=Application" "${CONTAINER_NAME} (GUI-CONTAINER)" "${CONTAINER_NAME}" \
-  > "${HOME}/.local/share/applications/${PREFIX}${CONTAINER_NAME}.desktop"
+  --name "${CONTAINER_NAME}" ${CONTAINER_IMAGE} ${START_CMD};
 
-elif [ "${_COMMAND}" = "delete" ] ; then
+elif [ "${_COMMAND}" = "create-entry" ] ; then
 
   CONTAINER_NAME=$2
 
-  if [ "${CONTAINER_NAME}" = "" ] ; then
-    echo "argument <container_name> can't be empty.";
-    exit "1";
-  fi
+  ENTRY_START_COMMAND="podman start ${CONTAINER_NAME}"
 
-  rm "${HOME}/.local/share/applications/gui-container_${CONTAINER_NAME}.desktop";
-  cd "${HOME}/.gui-container/" && rm -rf "${CONTAINER_NAME}";
+  mkdir -p "${ENTRY_PATH}";
+  printf "[Desktop Entry]\nName=%s\nExec=%s\nType=Application" "${CONTAINER_NAME} (GUI-CONTAINER)" "${ENTRY_START_COMMAND}" \
+  > "${ENTRY_PATH}/${PREFIX}${CONTAINER_NAME}.desktop";
+
+elif [ "${_COMMAND}" = "create-home" ] ; then
+
+  HOME_TO_CREATE=$2
+
+  create_home "${HOME_TO_CREATE}"
+
+elif [ "${_COMMAND}" = "delete-entry" ] ; then
+
+  CONTAINER_NAME=$2
+
+  check_null "${CONTAINER_NAME}" "container_name"
+
+  rm "${ENTRY_PATH}/gui-container_${CONTAINER_NAME}.desktop"
+
+elif [ "${_COMMAND}" = "delete-container" ] ; then
+
+  CONTAINER_NAME=$2
+
+  check_null "${CONTAINER_NAME}" "container_name"
+
   podman rm "${CONTAINER_NAME}";
-  
+
+
+elif [ "${_COMMAND}" = "delete-home" ] ; then
+
+  HOME_TO_DELETE=$2
+
+  check_null "${HOME_TO_DELETE}" "gui_container_home_name"
+
+  rm -I "${GUI_CONTAINER_HOME}/${HOME_TO_DELETE}"
+
 fi

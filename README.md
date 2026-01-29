@@ -7,64 +7,29 @@
 ---
 
 ### Requirements
-- os: linux_x86-64.
-- gpu: amd or intel or nvidia.
 - git.
+- os: linux_x86-64.
+- user: need subuid, subgid
+- gpu: amd or intel or nvidia.
 - podman rootless container.
-- X11 socket *if you use wayland, enable Xwayland.
-- pulseaudio socket *if you use pipewire, enable pipewire-pulse.
+- X11 socket.
+- pulse socket.
 
 > [!WARNING]  
-> don't run with `USER: avoid-user`, `UID: 9999` might be fs_owner bug.
+> "gui-container create-container" command automatic add --shm-size=512m flag!
 ---
 
 ### How to use
 
-```sh
-git clone github.com/bughomenoise/gui-container
-cd gui-container
-
-### add completion ###
-source ./completion # Optional.
-
-### create container ###
-# this command create.
-# 1.container home directory # ~/.gui-contaner/<container-name>.
-# 2.desktop entry file # ~/.local/share/applications.
-# 3.podman container.
-# ./gui-container create <image_name> <gui_app_command> <container-name> <podman_extra_flag>
-./gui-container docker.io/bughomenoise/gui-container:latest librewolf librewolf-desktop --cap-drop ALL
-
-### run with command (also run with app luncher) ###
-# podman start <container_name>
-podman start librewolf-desktop
-
-### delete ###
-# (this command not just delete container it delete 1.container, 2.container directory, 3.desktop entry file).
-# ./gui-container delete <container_name>
-./gui-container delete librewolf-desktop
-
-### update image ###
-# podman delete <container_name>
-podman delete librewolf-desktop
-# recreate use same <container_name> (you can change image* or change extra-flag) *image should support.
-./gui-container docker.io/bughomenoise/gui-container:latest librewolf librewolf-desktop --cap-drop ALL
-
-```
-
-
-<details>
-<summary>Custom Dockerfile</summary>
-
 ##### Create Dockerfile
 ```Dockerfile
-FROM --platform=linux/amd64 docker.io/bughomenoise/gui-container:latest
+FROM platform=linux/amd64 docker.io/bughomenoise/guicontainer:latest
 
 # install archlinux package.
-RUN pacman -Sy --noconfirm <archlinux_package_name>
+RUN pacman -Sy noconfirm <archlinux_package_name>
 
 # install AUR package.
-RUN sudo -u avoid-user -- paru -Sy --noconfirm <aur_package_name>
+RUN sudo -u avoiduser -- paru Sy noconfirm <aur_package_name>
 ```
 
 ##### Build Image
@@ -72,14 +37,42 @@ RUN sudo -u avoid-user -- paru -Sy --noconfirm <aur_package_name>
 podman build -t <tag_name> -f <dockerfile_path>
 ```
 
-</details>
+```sh
+git clone github.com/bughomenoise/gui-container
+cd gui-container
+
+
+### add completion ###
+source ./completion
+
+### create container ###
+# this command create.
+# 1.container-home-directory # ~/.gui-contaner/<container-name>.
+# 2.podman container.
+./gui-container create-container <image_name> <gui_app_command> <container-name> <podman_extra_flag_***optional***>
+
+### run with command (also run with app luncher) ###
+# podman start <container_name>
+podman start librewolf-desktop
+
+
+### delete container-home-directory ###
+./gui-container delete-home <container_name>
+
+### delete entry ###
+./gui-container delete-entry <container_name>
+
+### delete container ###
+podman rm <container_name>
+
+```
 
 <details>
 <summary>Install Package</summary>
 
 ```sh
-# exec into container with "avoid-user" user or uid "9999".
-podman exec --user avoid-user -it <container_name> bash 
+# exec into container.
+podman exec -it <container_name> bash 
 
 ## then install package inside container.
 
@@ -87,7 +80,7 @@ podman exec --user avoid-user -it <container_name> bash
 sudo pacman -Sy <archlinux_package_name>
 
 # install AUR package.
-paru -Sy <aur_package_name>
+yay -Sy <aur_package_name>
 ```
 
 </details>

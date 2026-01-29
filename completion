@@ -2,11 +2,15 @@
 
 
 function _gui-container {
-  local _COMMANDS="create delete" 
+  local _COMMANDS="create-container create-entry delete-entry create-home delete-home" 
 
   declare -A _PODMAN=(
-    ["create"]="$(podman images --format '{{ .Repository}}:{{ .Tag }}')"
-    ["delete"]="$(podman ps -a --format '{{ .Names }}')"
+    ["create-container"]="$(podman images --format '{{ .Repository}}:{{ .Tag }}')"
+    ["create-entry"]="$(podman ps -a --format '{{ .Names }}')"
+    ["delete-entry"]="$(podman ps -a --format '{{ .Names }}')"
+    ["create-home"]="$(podman ps -a --format '{{ .Names }}')"
+    ["delete-home"]="$(ls ~/.gui-container)"
+
   )
 
   COMPREPLY=()
