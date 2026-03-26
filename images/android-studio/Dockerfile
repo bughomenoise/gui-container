@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 archlinux:multilib-devel
+FROM --platform=linux/amd64 archlinux:latest
 
 RUN systemd-machine-id-setup
 
@@ -26,10 +26,7 @@ RUN rm -rf ${aur_path}
 RUN sudo -u ${username} -- ${aur_cmd} -Syu --noconfirm
 
 #video
-RUN pacman -S --noconfirm libva-mesa-driver mesa lib32-mesa
-RUN pacman -S --noconfirm vulkan-intel lib32-vulkan-intel
-RUN pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon
-RUN pacman -S --noconfirm vulkan-nouveau lib32-vulkan-nouveau
+RUN pacman -S --noconfirm libva-mesa-driver mesa
 RUN pacman -S --noconfirm xorg-server xorg-xinit
 
 #audio
@@ -42,8 +39,8 @@ RUN pacman -S --noconfirm fontconfig noto-fonts gnu-free-fonts ttf-liberation
 RUN pacman -S --noconfirm libxkbfile libbsd
 
 #app
-RUN pacman -S --noconfirm bitwarden firefox wezterm neovim curl
-RUN sudo -u ${username} -- ${aur_cmd} -S --noconfirm librewolf-bin
+RUN pacman -S --noconfirm firefox wezterm neovim curl
+RUN sudo -u ${username} -- ${aur_cmd} -S --noconfirm android-studio
 
 #remove user
 RUN userdel -rf ${username}
