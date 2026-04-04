@@ -9,10 +9,10 @@ RUN locale-gen
 RUN pacman -Syu --noconfirm
 
 #create user
-ARG username="nobody9999"
+RUN echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+ARG username="guicontainer"
 RUN useradd -m -u 9999 -G wheel ${username}
 RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-RUN echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN passwd -d ${username}
 
 #aur
@@ -33,7 +33,7 @@ RUN pacman -S --noconfirm vulkan-nouveau lib32-vulkan-nouveau
 RUN pacman -S --noconfirm xorg-server xorg-xinit
 
 #audio
-RUN pacman -S --noconfirm pipewire pipewire-alsa pipewire-jack pipewire-pulse
+RUN pacman -S --noconfirm pulseaudio
 
 #font
 RUN pacman -S --noconfirm fontconfig noto-fonts gnu-free-fonts ttf-liberation
@@ -42,8 +42,5 @@ RUN pacman -S --noconfirm fontconfig noto-fonts gnu-free-fonts ttf-liberation
 RUN pacman -S --noconfirm libxkbfile libbsd
 
 #app
-RUN pacman -S --noconfirm bitwarden firefox wezterm neovim curl
+RUN pacman -S --noconfirm firefox neovim curl
 RUN sudo -u ${username} -- ${aur_cmd} -S --noconfirm librewolf-bin
-
-#remove user
-RUN userdel -rf ${username}

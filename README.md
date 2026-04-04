@@ -17,6 +17,8 @@
 
 > [!WARNING]  
 > "gui-container create-container" command automatic add --shm-size=512m flag!
+> for "base.Dockerfile" avoid user -> "name: guicontainer, UID: 9999" this user or userid create for install AUR packages.
+> wheel Group NO PASSWD.
 ---
 
 ### How to use
