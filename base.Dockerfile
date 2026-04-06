@@ -6,8 +6,6 @@ RUN touch /etc/default/locale
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 RUN locale-gen
 
-RUN pacman -Syu --noconfirm
-
 #create user
 RUN echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ARG username="guicontainer"
@@ -15,32 +13,46 @@ RUN useradd -m -u 9999 -G wheel ${username}
 RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN passwd -d ${username}
 
-#aur
+#package manager 
+RUN pacman -Syu --noconfirm
+ARG i_flag="-S --noconfirm --needed"
+ARG pacman_i="pacman ${i_flag}"
 ARG aur_path="/home/${username}/aur-install"
 ARG aur_cmd="yay"
-RUN pacman -S --noconfirm --needed git base-devel
+ARG aur_i="sudo -u ${username} -- ${aur_cmd} ${i_flag}"
+RUN ${pacman_i} git base-devel
 RUN sudo -u ${username} -- git clone https://aur.archlinux.org/${aur_cmd}.git ${aur_path}
 RUN cd ${aur_path} && sudo -u ${username} -- makepkg -si --noconfirm
 RUN rm -rf ${aur_path}
-
 RUN sudo -u ${username} -- ${aur_cmd} -Syu --noconfirm
 
+#theme
+RUN ${pacman_i} materia-gtk-theme
+ARG gtk3d="/etc/gtk-3.0"
+ARG gtk3f="${gtk3d}/settings.ini"
+RUN mkdir -p ${gtk3d};
+RUN echo "[Settings]" > ${gtk3f};
+RUN echo "gtk-theme-name = Materia-dark" >> ${gtk3f};
+RUN echo "gtk-application-prefer-dark-theme = true" >> ${gtk3f}
+
 #video
-RUN pacman -S --noconfirm libva-mesa-driver mesa lib32-mesa
-RUN pacman -S --noconfirm vulkan-intel lib32-vulkan-intel
-RUN pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon
-RUN pacman -S --noconfirm vulkan-nouveau lib32-vulkan-nouveau
-RUN pacman -S --noconfirm xorg-server xorg-xinit
+RUN ${pacman_i} libva-mesa-driver mesa lib32-mesa mesa-utils opencl-mesa lib32-opencl-mesa
+RUN ${pacman_i} vulkan-intel lib32-vulkan-intel
+RUN ${pacman_i} vulkan-radeon lib32-vulkan-radeon
+RUN ${pacman_i} vulkan-nouveau lib32-vulkan-nouveau
+RUN ${pacman_i} xorg-server xorg-xinit
+## xe fixed
+RUN ${pacman_i} intel-media-driver
 
 #audio
-RUN pacman -S --noconfirm pulseaudio
+RUN ${pacman_i} pulseaudio
 
 #font
-RUN pacman -S --noconfirm fontconfig noto-fonts gnu-free-fonts ttf-liberation
+RUN ${pacman_i} fontconfig noto-fonts gnu-free-fonts ttf-liberation
 
 #lib
-RUN pacman -S --noconfirm libxkbfile libbsd
+RUN ${pacman_i} libxkbfile libbsd
 
 #app
-RUN pacman -S --noconfirm firefox neovim curl
-RUN sudo -u ${username} -- ${aur_cmd} -S --noconfirm librewolf-bin
+RUN ${pacman_i} firefox vi helix curl
+RUN ${aur_i} librewolf-bin
