@@ -7,10 +7,8 @@
 ---
 
 ### Requirements
-- git.
 - os: linux_x86-64.
-- user: need subuid, subgid
-- gpu: amd or intel or nvidia.
+- gpu: amd or intel. (nvidia not install in base.Dockerfile)
 - podman rootless container.
 - X11 socket.
 - pulse socket.
@@ -44,9 +42,6 @@ podman build -t <tag_name> -f <dockerfile_path>
 git clone github.com/bughomenoise/gui-container
 cd gui-container
 
-
-### add completion ###
-source ./completion
 
 ### create container ###
 # this command create.

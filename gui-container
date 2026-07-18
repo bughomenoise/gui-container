@@ -37,7 +37,7 @@ if [ "${_COMMAND}" = "create-container" ] ; then
   -e "XDG_RUNTIME_DIR=${HOME}/.xdg-runtime" \
   -e "DISPLAY=${DISPLAY}" \
   -v "/tmp/.X11-unix:/tmp/.X11-unix" \
-  -v "${XDG_RUNTIME_DIR}/pulse/native:${HOME}/.xdg-runtime/pulse/native:U" \
+  -v "${HOME}/.pulse-container:${HOME}/.xdg-runtime/pulse/" \
   --device /dev/dri \
   --shm-size=512m \
   -v "${CONTAINER_HOME}:${HOME}:U" \
