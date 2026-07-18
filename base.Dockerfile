@@ -50,5 +50,5 @@ RUN ${pacman_i} fontconfig noto-fonts gnu-free-fonts ttf-liberation
 RUN ${pacman_i} libxkbfile libbsd
 
 #app
-RUN ${pacman_i} curl vi helix openssh firefox chromium cloudflared steam bitwarden obs-studio blender
+RUN ${pacman_i} curl vi helix openssh firefox chromium cloudflared steam bitwarden obs-studio blender	wezterm
 RUN ${aur_i} herdr-bin pi-bin claude-code antigravity-cli 
