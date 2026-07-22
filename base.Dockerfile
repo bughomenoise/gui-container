@@ -36,6 +36,7 @@ RUN echo "gtk-application-prefer-dark-theme = true" >> ${gtk3f}
 #video
 RUN ${pacman_i} libva-mesa-driver mesa lib32-mesa mesa-utils opencl-mesa lib32-opencl-mesa
 RUN ${pacman_i} vulkan-radeon lib32-vulkan-radeon
+RUN ${pacman_i} vulkan-intel lib32-vulkan-intel
 RUN ${pacman_i} xorg-server xorg-xinit libxkbcommon libxkbcommon-x11 lib32-libxkbcommon lib32-libxkbcommon-x11 wayland
 ## xe fixed
 RUN ${pacman_i} intel-media-driver
