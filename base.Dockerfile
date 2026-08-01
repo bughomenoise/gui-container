@@ -34,12 +34,10 @@ RUN echo "gtk-theme-name = Materia-dark" >> ${gtk3f};
 RUN echo "gtk-application-prefer-dark-theme = true" >> ${gtk3f}
 
 #video
-RUN ${pacman_i} libva-mesa-driver mesa lib32-mesa mesa-utils opencl-mesa lib32-opencl-mesa vulkan-tools
-RUN ${pacman_i} vulkan-radeon lib32-vulkan-radeon rocm-hip-sdk rocm-opencl-sdk hip-runtime-amd
-RUN ${pacman_i} vulkan-intel lib32-vulkan-intel
-RUN ${pacman_i} xorg-server xorg-xinit libxkbcommon libxkbcommon-x11 lib32-libxkbcommon lib32-libxkbcommon-x11 wayland
-## xe fixed
-RUN ${pacman_i} intel-media-driver
+RUN ${pacman_i} mesa lib32-mesa mesa-utils vulkan-tools
+RUN ${pacman_i} vulkan-radeon lib32-vulkan-radeon
+RUN ${pacman_i} vulkan-intel lib32-vulkan-intel intel-media-driver
+RUN ${pacman_i} xorg-server xorg-xinit
 
 #audio
 RUN ${pacman_i} pulseaudio
@@ -51,7 +49,5 @@ RUN ${pacman_i} fontconfig noto-fonts gnu-free-fonts ttf-liberation
 RUN ${pacman_i} libxkbfile libbsd
 
 #pkg
-RUN ${pacman_i} curl vi helix openssh fish zsh fuse2 python uv nodejs npm
-RUN ${pacman_i} firefox chromium steam bitwarden obs-studio blender wezterm 
-RUN ${aur_i} librewolf-bin herdr-bin
-RUN ${aur_i} nvm pi-bin antigravity-cli
+RUN ${pacman_i} curl vi helix openssh fish zsh fuse2 python uv nodejs npm firefox chromium bitwarden blender wezterm
+RUN ${aur_i} nvm pi-bin antigravity-cli herdr-bin librewolf-bin llama.cpp-vulkan 
